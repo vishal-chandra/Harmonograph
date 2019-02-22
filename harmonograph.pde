@@ -1,13 +1,14 @@
 int x, y = 0;
 int prevX, prevY = 300; 
 
-float t = 0; //time
+float t; //time
 int scalar; //enlarges graph
 int[] consts = new int[6]; //equation coefficients
 
 void setup() {
   size(600, 600);
   background(255);
+  t = 0; //set time
   scalar = 50;
   setConsts(); //get random coefficients
 }
@@ -18,10 +19,10 @@ void draw() {
   
   if(keyPressed) { //reset
     if(key == 'r' || key == 'R') {
-      reset();
+      setup();
     }
   }
-    
+  
 }
 
 void pushTable(int speed, float time_delta) {
@@ -38,7 +39,7 @@ void pushTable(int speed, float time_delta) {
     prevX = x;
     prevY = y;
     
-    if(mousePressed) t += time_delta; //continues drawing when mouse held
+    /*if(mousePressed)*/ t += time_delta; //continues drawing when mouse held
   }
 }
 
@@ -53,11 +54,5 @@ void setConsts() {
   for(int i = 0; i < consts.length; i++) {
     consts[i] = (int)(random(1, 5));
   }
-}
-
-void reset() {
-  setConsts(); //new drawing!
-  t = 0; //reset time
-  clear();
 }
     
