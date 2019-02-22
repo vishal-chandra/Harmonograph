@@ -1,22 +1,31 @@
 int x, y = 0;
 int prevX, prevY = 300; 
 
-float t; //time
+float t = 0; //time
 int scalar; //enlarges graph
+int[] consts = new int[6]; //equation coefficients
 
-void setup(){
+void setup() {
   size(600, 600);
   background(255);
   scalar = 50;
+  setConsts(); //get random coefficients
 }
 
-void draw(){
+void draw() {
   translate(300, 300); //to center
   pushTable(2, 0.01f);
+  
+  if(keyPressed) { //reset
+    if(key == 'r' || key == 'R') {
+      reset();
+    }
+  }
+    
 }
 
-void pushTable(int speed, float time_delta){
-  for(int i = 0; i < speed; i++){ //num increments multiplies executions per call of draw()
+void pushTable(int speed, float time_delta) {
+  for(int i = 0; i < speed; i++) { //num increments multiplies executions per call of draw()
     
     //get point for this value of t
     parametricFunc(t);
@@ -34,9 +43,21 @@ void pushTable(int speed, float time_delta){
 }
 
 //parametric equation describing the harmonograph's motion
-void parametricFunc(float t){
+void parametricFunc(float t) {
   //decay caused by friction
-  x = (int)(5 * sin(3*t + 2) * exp(-0.01 * t) * scalar);
-  y = (int)(4 * sin(5*t + 3) * exp(-0.01 * t) * scalar);
+  x = (int)(consts[0] * sin(consts[1]*t + consts[2]) * exp(-0.01 * t) * scalar);
+  y = (int)(consts[3] * sin(consts[4]*t + consts[5]) * exp(-0.01 * t) * scalar);
+}
+
+void setConsts() {
+  for(int i = 0; i < consts.length; i++) {
+    consts[i] = (int)(random(1, 5));
+  }
+}
+
+void reset() {
+  setConsts(); //new drawing!
+  t = 0; //reset time
+  clear();
 }
     
