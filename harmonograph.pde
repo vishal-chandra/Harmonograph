@@ -1,33 +1,24 @@
-int x, y = 300;
+int x, y = 0;
 int prevX, prevY = 300; 
 
-//amplitude, frequency, phase; 1 of each for 4 equations
-float[] consts = new float[6];
-
 float t; //time
+int scalar; //enlarges graph
 
 void setup(){
   size(600, 600);
   background(255);
-  for(int i = 0; i < 6; i++){
-    consts[i] = random(1, 5);
-    print(consts[i]);
-  }
+  scalar = 50;
 }
 
 void draw(){
+  translate(300, 300); //to center
   pushTable(2, 0.01f);
 }
 
 void pushTable(int speed, float time_delta){
   for(int i = 0; i < speed; i++){ //num increments multiplies executions per call of draw()
     
-    //print(x);
-    //print(", ");
-    //print(y);
-    //print("\n");
-    
-    //get point
+    //get point for this value of t
     parametricFunc(t);
     
     //draws this point and line connecting to last point
@@ -45,7 +36,7 @@ void pushTable(int speed, float time_delta){
 //parametric equation describing the harmonograph's motion
 void parametricFunc(float t){
   //decay caused by friction
-  int x = (int)(300 + consts[0] * sin(consts[1]*t + consts[2]) * exp(-0.01 * t) * 50);
-  int y = (int)(300 + consts[3] * sin(consts[4]*t + consts[5]) * exp(-0.01 * t) * 50);
+  x = (int)(5 * sin(3*t + 2) * exp(-0.01 * t) * scalar);
+  y = (int)(4 * sin(5*t + 3) * exp(-0.01 * t) * scalar);
 }
     
