@@ -1,7 +1,4 @@
-/*
-CONTROLS:
-R - Reset (canvas, constants, color)
-*/
+/* CONTROLS: R - Reset (canvas, constants, color) */
 
 PFont font; 
 
@@ -10,13 +7,12 @@ float t; //time
 int x, y, prevX, prevY;
 int r, g, b; //color values
 int[] consts = new int[6]; //equation coefficients
+boolean firstDraw = true;
 
 //constants
 final int scalar = 60; //enlarges graph
-final float time_increment = 0.01;
+final float time_increment = 0.01f;
 final int speed = 2; //how many increments per draw()
-
-
 
 void setup() {
   size(600, 600);
@@ -29,7 +25,6 @@ void setup() {
   at the first point
   */
   t = time_increment;
-  parametricFunc(t); //set (x, y) to first point on curve
   
   //random coefficients
   for(int i = 0; i < consts.length; i++) {
@@ -37,7 +32,6 @@ void setup() {
   }
   
   //adjustments
-  
   //prevent rectangular drawings
   if(consts[0] % consts[3] == 0 || consts[3] % consts[0] == 0) consts[0] += 1;
   //prevent line drawings
@@ -47,7 +41,6 @@ void setup() {
   r = (int)(random(200));
   g = (int)(random(200));
   b = (int)(random(200));
-  
 }
 
 void draw() {
@@ -56,8 +49,40 @@ void draw() {
   stroke(r, g, b);
   pushTable(speed, time_increment);
   if(keyPressed && (key == 'r' || key == 'R')) setup(); //reset
+  //print("(" + prevX + ", " + prevY + ")\n");
+}
+
+//Main method - draws harmonographic image
+void pushTable(int speed, float time_increment) {
+  for(int i = 0; i < speed; i++) { //multiplies executions per call
   
-  //print("(" + x + ", " + y + ")\n"); debug
+    //next line will start from this point
+    prevX = x;
+    prevY = y;
+    
+    //get point coords for this value of t
+    parametricFunc(t);
+    
+    //draws this point and line connecting to last point
+    point(x, y);
+    
+    //only draw the line if prevX and prevY aren't 0! (they will be on first draw)
+    if(!firstDraw) {
+      line(prevX, prevY, x, y);
+    } 
+    else {
+      firstDraw = false;
+    }
+    
+    t += time_increment; //increment time
+  }
+}
+
+//System of equation describing the harmonograph's motion
+void parametricFunc(float t) {
+  //decay caused by friction
+  x = ceil( consts[0] * sin(consts[1]*t + consts[2]) * exp(-0.01 * t) * scalar );
+  y = ceil( consts[3] * sin(consts[4]*t + consts[5]) * exp(-0.01 * t) * scalar );
 }
 
 //Shows equation box in upper left
@@ -71,31 +96,5 @@ void drawMath() {
        , 10, 20);
   text("y = " + consts[3] + "sin(" + consts[4] + "t + " + consts[5] + ")e^0.01t"
        , 10, 40);
-}
-
-//Main method - draws harmonographic image
-void pushTable(int speed, float time_increment) {
-  for(int i = 0; i < speed; i++) { //multiplies executions per call
-  
-    //next line will start from this point
-    prevX = x;
-    prevY = y;
-    
-    t += time_increment; //increment time
-    
-    //get point coords for this value of t
-    parametricFunc(t);
-    
-    //draws this point and line connecting to last point
-    point(x, y);
-    line(prevX, prevY, x, y);
-  }
-}
-
-//System of equation describing the harmonograph's motion
-void parametricFunc(float t) {
-  //decay caused by friction
-  x = (int)( consts[0] * sin(consts[1]*t + consts[2]) * exp(-0.01 * t) * scalar );
-  y = (int)( consts[3] * sin(consts[4]*t + consts[5]) * exp(-0.01 * t) * scalar );
 }
     
