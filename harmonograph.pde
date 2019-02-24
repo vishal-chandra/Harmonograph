@@ -41,12 +41,12 @@ void setup() {
 
 void draw() {
   drawMath();
-  translate(300, 300); //to center
+  translate(width/2, height/2); //to center
   stroke(r, g, b);
   pushTable(2, 0.01f);
-  
   if(keyPressed && (key == 'r' || key == 'R')) setup(); //reset
 }
+
 //Shows equation box in upper left
 void drawMath() {
   stroke(0);
