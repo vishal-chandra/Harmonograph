@@ -30,8 +30,6 @@ void setup() {
   */
   t = time_increment;
   parametricFunc(t); //set (x, y) to first point on curve
-  prevX = x;
-  prevY = y;
   
   //random coefficients
   for(int i = 0; i < consts.length; i++) {
@@ -46,9 +44,10 @@ void setup() {
   if(consts[1] == consts[4]) consts[4] = (int)(random(1, 5));
   
   //random color
-  r = (int)(random(255));
-  g = (int)(random(255));
-  b = (int)(random(255));
+  r = (int)(random(200));
+  g = (int)(random(200));
+  b = (int)(random(200));
+  
 }
 
 void draw() {
@@ -57,6 +56,8 @@ void draw() {
   stroke(r, g, b);
   pushTable(speed, time_increment);
   if(keyPressed && (key == 'r' || key == 'R')) setup(); //reset
+  
+  //print("(" + x + ", " + y + ")\n"); debug
 }
 
 //Shows equation box in upper left
