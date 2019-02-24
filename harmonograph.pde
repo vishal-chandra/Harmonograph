@@ -5,29 +5,41 @@ R - Reset (canvas, constants, color)
 
 PFont font; 
 
-int x, y, prevX, prevY; 
+//graph data
 float t; //time
-
+int x, y, prevX, prevY;
 int r, g, b; //color values
-int scalar; //enlarges graph
 int[] consts = new int[6]; //equation coefficients
+
+//constants
+final int scalar = 60; //enlarges graph
+final float time_increment = 0.01;
+final int speed = 2; //how many increments per draw()
+
+
 
 void setup() {
   size(600, 600);
   background(255);
-  
   font = createFont("Arial", 12, true);
  
-  x = 0;
-  y = 0;
-  prevX = 0;
-  prevY = 0;
-  t = 0; //set time
-  scalar = 60;
+  /*
+  since parametric, t=0 will be drastically different than t=0.01
+  to prevent a large line from (0, 0) to the first point, we start
+  at the first point
+  */
+  t = time_increment;
+  parametricFunc(t); //set (x, y) to first point on curve
+  prevX = x;
+  prevY = y;
   
-  for(int i = 0; i < consts.length; i++) {//random coefficients
+  //random coefficients
+  for(int i = 0; i < consts.length; i++) {
     consts[i] = (int)(random(1, 5));
   }
+  
+  //adjustments
+  
   //prevent rectangular drawings
   if(consts[0] % consts[3] == 0 || consts[3] % consts[0] == 0) consts[0] += 1;
   //prevent line drawings
@@ -43,7 +55,7 @@ void draw() {
   drawMath();
   translate(width/2, height/2); //to center
   stroke(r, g, b);
-  pushTable(2, 0.01f);
+  pushTable(speed, time_increment);
   if(keyPressed && (key == 'r' || key == 'R')) setup(); //reset
 }
 
@@ -61,28 +73,28 @@ void drawMath() {
 }
 
 //Main method - draws harmonographic image
-void pushTable(int speed, float time_delta) {
-  for(int i = 0; i < speed; i++) { //num increments multiplies executions per call of draw()
+void pushTable(int speed, float time_increment) {
+  for(int i = 0; i < speed; i++) { //multiplies executions per call
+  
+    //next line will start from this point
+    prevX = x;
+    prevY = y;
     
-    //get point for this value of t
+    t += time_increment; //increment time
+    
+    //get point coords for this value of t
     parametricFunc(t);
     
     //draws this point and line connecting to last point
     point(x, y);
     line(prevX, prevY, x, y);
-    
-    //next line will start from this point
-    prevX = x;
-    prevY = y;
-    
-    /*if(mousePressed)*/ t += time_delta; //continues drawing when mouse held
   }
 }
 
 //System of equation describing the harmonograph's motion
 void parametricFunc(float t) {
   //decay caused by friction
-  x = (int)(consts[0] * sin(consts[1]*t + consts[2]) * exp(-0.01 * t) * scalar);
-  y = (int)(consts[3] * sin(consts[4]*t + consts[5]) * exp(-0.01 * t) * scalar);
+  x = (int)( consts[0] * sin(consts[1]*t + consts[2]) * exp(-0.01 * t) * scalar );
+  y = (int)( consts[3] * sin(consts[4]*t + consts[5]) * exp(-0.01 * t) * scalar );
 }
     
