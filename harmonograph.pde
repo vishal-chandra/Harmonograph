@@ -7,18 +7,22 @@ float t; //time
 int x, y, prevX, prevY;
 int r, g, b; //color values
 int[] consts = new int[6]; //equation coefficients
-boolean firstDraw = true;
+boolean initFrame;
 
 //constants
 final int scalar = 60; //enlarges graph
 final float time_increment = 0.01f;
-final int speed = 2; //how many increments per draw()
+final int FR = 60; //frame rate
 
 void setup() {
   size(600, 600);
   background(255);
+  frameRate(FR);
   font = createFont("Arial", 12, true);
- 
+  
+  //we are on the first frame of this drawing
+  initFrame = true;
+  
   /*
   since parametric, t=0 will be drastically different than t=0.01
   to prevent a large line from (0, 0) to the first point, we start
@@ -35,7 +39,7 @@ void setup() {
   //prevent rectangular drawings
   if(consts[0] % consts[3] == 0 || consts[3] % consts[0] == 0) consts[0] += 1;
   //prevent line drawings
-  if(consts[1] == consts[4]) consts[4] = (int)(random(1, 5));
+  if(consts[1] == consts[4]) consts[4] += 1;
   
   //random color
   r = (int)(random(200));
@@ -47,14 +51,13 @@ void draw() {
   drawMath();
   translate(width/2, height/2); //to center
   stroke(r, g, b);
-  pushTable(speed, time_increment);
+  pushTable(time_increment);
   if(keyPressed && (key == 'r' || key == 'R')) setup(); //reset
   //print("(" + prevX + ", " + prevY + ")\n");
 }
 
 //Main method - draws harmonographic image
-void pushTable(int speed, float time_increment) {
-  for(int i = 0; i < speed; i++) { //multiplies executions per call
+void pushTable(float time_increment) {
   
     //next line will start from this point
     prevX = x;
@@ -67,15 +70,14 @@ void pushTable(int speed, float time_increment) {
     point(x, y);
     
     //only draw the line if prevX and prevY aren't 0! (they will be on first draw)
-    if(!firstDraw) {
+    if(!initFrame) {
       line(prevX, prevY, x, y);
     } 
     else {
-      firstDraw = false;
+      initFrame = false;
     }
     
     t += time_increment; //increment time
-  }
 }
 
 //System of equation describing the harmonograph's motion
