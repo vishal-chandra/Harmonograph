@@ -56,6 +56,14 @@ void draw() {
   //print("(" + prevX + ", " + prevY + ")\n");
 }
 
+void mousePressed() {
+  frameRate(120);
+}
+
+void mouseReleased() {
+  frameRate(60);
+}
+
 //Main method - draws harmonographic image
 void pushTable(float time_increment) {
   
