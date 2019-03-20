@@ -31,7 +31,7 @@ void setup() {
   //prevent rectangular drawings
   if(consts[0] % consts[3] == 0 || consts[3] % consts[0] == 0) consts[0] += 1;
   //prevent line drawings
-  if(consts[1] == consts[4]) consts[4] = (int)(random(1, 5));
+  while(consts[1] == consts[4]) consts[4] = (int)(random(1, 5));
   
   //random color
   r = (int)(random(255));
