@@ -1,52 +1,101 @@
-/*
-CONTROLS:
-R - Reset (canvas, constants, color)
-*/
+/* CONTROLS: R - Reset (canvas, constants, color) */
 
 PFont font; 
 
-int x, y, prevX, prevY; 
+//graph data
 float t; //time
-
+int x, y, prevX, prevY;
 int r, g, b; //color values
-int scalar; //enlarges graph
 int[] consts = new int[6]; //equation coefficients
+boolean initFrame;
+
+//constants
+final int scalar = 60; //enlarges graph
+final float time_increment = 0.01f;
+final int FR = 60; //frame rate
 
 void setup() {
   size(600, 600);
   background(255);
-  
+  frameRate(FR);
   font = createFont("Arial", 12, true);
- 
-  x = 0;
-  y = 0;
-  prevX = 0;
-  prevY = 0;
-  t = 0; //set time
-  scalar = 60;
   
-  for(int i = 0; i < consts.length; i++) {//random coefficients
+  //we are on the first frame of this drawing
+  initFrame = true;
+  
+  /*
+  since parametric, t=0 will be drastically different than t=0.01
+  to prevent a large line from (0, 0) to the first point, we start
+  at the first point
+  */
+  t = time_increment;
+  
+  //random coefficients
+  for(int i = 0; i < consts.length; i++) {
     consts[i] = (int)(random(1, 5));
   }
+  
+  //adjustments
   //prevent rectangular drawings
   if(consts[0] % consts[3] == 0 || consts[3] % consts[0] == 0) consts[0] += 1;
   //prevent line drawings
   while(consts[1] == consts[4]) consts[4] = (int)(random(1, 5));
+  if(consts[1] == consts[4]) consts[4] += 1;
   
   //random color
-  r = (int)(random(255));
-  g = (int)(random(255));
-  b = (int)(random(255));
+  r = (int)(random(200));
+  g = (int)(random(200));
+  b = (int)(random(200));
 }
 
 void draw() {
   drawMath();
-  translate(300, 300); //to center
+  translate(width/2, height/2); //to center
   stroke(r, g, b);
-  pushTable(2, 0.01f);
-  
+  pushTable(time_increment);
   if(keyPressed && (key == 'r' || key == 'R')) setup(); //reset
+  //print("(" + prevX + ", " + prevY + ")\n");
 }
+
+void mousePressed() {
+  frameRate(120);
+}
+
+void mouseReleased() {
+  frameRate(60);
+}
+
+//Main method - draws harmonographic image
+void pushTable(float time_increment) {
+  
+    //next line will start from this point
+    prevX = x;
+    prevY = y;
+    
+    //get point coords for this value of t
+    parametricFunc(t);
+    
+    //draws this point and line connecting to last point
+    point(x, y);
+    
+    //only draw the line if prevX and prevY aren't 0! (they will be on first draw)
+    if(!initFrame) {
+      line(prevX, prevY, x, y);
+    } 
+    else {
+      initFrame = false;
+    }
+    
+    t += time_increment; //increment time
+}
+
+//System of equation describing the harmonograph's motion
+void parametricFunc(float t) {
+  //decay caused by friction
+  x = ceil( consts[0] * sin(consts[1]*t + consts[2]) * exp(-0.01 * t) * scalar );
+  y = ceil( consts[3] * sin(consts[4]*t + consts[5]) * exp(-0.01 * t) * scalar );
+}
+
 //Shows equation box in upper left
 void drawMath() {
   stroke(0);
@@ -58,31 +107,5 @@ void drawMath() {
        , 10, 20);
   text("y = " + consts[3] + "sin(" + consts[4] + "t + " + consts[5] + ")e^0.01t"
        , 10, 40);
-}
-
-//Main method - draws harmonographic image
-void pushTable(int speed, float time_delta) {
-  for(int i = 0; i < speed; i++) { //num increments multiplies executions per call of draw()
-    
-    //get point for this value of t
-    parametricFunc(t);
-    
-    //draws this point and line connecting to last point
-    point(x, y);
-    line(prevX, prevY, x, y);
-    
-    //next line will start from this point
-    prevX = x;
-    prevY = y;
-    
-    /*if(mousePressed)*/ t += time_delta; //continues drawing when mouse held
-  }
-}
-
-//System of equation describing the harmonograph's motion
-void parametricFunc(float t) {
-  //decay caused by friction
-  x = (int)(consts[0] * sin(consts[1]*t + consts[2]) * exp(-0.01 * t) * scalar);
-  y = (int)(consts[3] * sin(consts[4]*t + consts[5]) * exp(-0.01 * t) * scalar);
 }
     
