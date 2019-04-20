@@ -20,4 +20,5 @@ With each frame of the simulation, an internal timer increments up, allowing the
 
 ### The Decay
 
-Since the harmonograph is a device comprised of two pendulums, each axis of motion can be descirbed by the equation<br><br/>`axis(t) = Asin(ft + p) * e^(-dt)`
+Since the harmonograph is a device comprised of two pendulums, each axis of motion can be described by the equation<br>`axis(t) = Asin(ft + p) * e^(-dt)` (d = 0.01 in this simulation)<br><br>
+Other factors which affect the apparatus are air friction and friction between the pen and paper. However, both of these are linear sources of decay so the overall decay still remains exponential.
